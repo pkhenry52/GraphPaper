@@ -15,7 +15,12 @@ from reportlab.lib.units import mm, inch
 
 class BldGrf(wx.Frame):
     '''Routine to build form and populate grid'''
-    def __init__(self, parent, id):
+    def __init__(self):
+
+        super(BldGrf, self).__init__(None, wx.ID_ANY, title='Graph Paper Plotter',
+                          size=(550, 700), style=wx.DEFAULT_FRAME_STYLE &
+                          ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX |
+                            wx.MINIMIZE_BOX | wx.CLOSE_BOX))
 
         self.x_mult = ['1']
         self.y_mult = ['1']
@@ -37,11 +42,11 @@ class BldGrf(wx.Frame):
                   'dark green', 'green', 'light green']
 
         Width = ['.1', '.2', '.5', '1', '1.5', '2', '2.5']
-
+        '''
         wx.Frame.__init__(self, parent, id, title='Graph Paper Plotter',
                           size=(550, 700), style=wx.DEFAULT_FRAME_STYLE &
                           ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX |
-                            wx.MINIMIZE_BOX | wx.CLOSE_BOX))
+                            wx.MINIMIZE_BOX | wx.CLOSE_BOX))'''
 
         font1 = wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.FONTWEIGHT_BOLD)
 
@@ -315,6 +320,9 @@ class BldGrf(wx.Frame):
 
         self.SetSizer(self.Sizer)
         self.b4.SetFocus()
+
+        self.Show()
+        self.Center()
 
     def SaveFile(self, evt):
         # get a pdf file name
@@ -953,7 +961,7 @@ class BldGrf(wx.Frame):
                 self.y_mjrintrvl]
 
     def PrintFile(self, evt):
-        PDFFrm(self, -1)
+        PDFFrm(self)
 
     def OnCmb(self, evt):
         obj = evt.GetEventObject()
@@ -1101,7 +1109,7 @@ class BldGrf(wx.Frame):
 
 
 class PDFFrm(wx.Frame):
-    def __init__(self, parent, id):
+    def __init__(self, parent):
         wx.Frame.__init__(self, parent)
         from wx.lib.pdfviewer import pdfViewer, pdfButtonPanel
         self.Maximize(True)
@@ -1115,8 +1123,7 @@ class PDFFrm(wx.Frame):
                                           wx.DefaultPosition,
                                           wx.DefaultSize, 0)
         vsizer.Add(self.buttonpanel, 0,
-                   wx.GROW | wx.ALIGN_CENTER_VERTICAL |
-                   wx.LEFT | wx.RIGHT | wx.TOP, 5)
+                   wx.GROW | wx.LEFT | wx.RIGHT | wx.TOP, 5)
         self.viewer = pdfViewer(self, wx.NewId(), wx.DefaultPosition,
                                 wx.DefaultSize, wx.HSCROLL |
                                 wx.VSCROLL | wx.SUNKEN_BORDER)
@@ -1126,7 +1133,7 @@ class PDFFrm(wx.Frame):
                                wx.DefaultPosition, wx.DefaultSize, 0)
         loadbutton.SetForegroundColour((255, 0, 0))
         vsizer.Add(loadbutton, 0, wx.ALIGN_CENTER | wx.ALL, 5)
-        hsizer.Add(vsizer, 1, wx.GROW | wx.ALIGN_CENTER_HORIZONTAL | wx.ALL, 5)
+        hsizer.Add(vsizer, 1, wx.GROW | wx.ALL, 5)
         self.SetSizer(hsizer)
         self.SetAutoLayout(True)
 
@@ -1158,9 +1165,6 @@ class PDFFrm(wx.Frame):
 
 if __name__ == '__main__':
 
-    app = wx.App()
-
-    frm = BldGrf(None, -1)
-    frm.Show()
-    frm.Center()
+    app = wx.App(False)
+    frm = BldGrf()
     app.MainLoop()
