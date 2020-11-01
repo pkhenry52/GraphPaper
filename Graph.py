@@ -17,10 +17,12 @@ class BldGrf(wx.Frame):
     '''Routine to build form and populate grid'''
     def __init__(self):
 
-        super(BldGrf, self).__init__(None, wx.ID_ANY, title='Graph Paper Plotter',
-                          size=(550, 700), style=wx.DEFAULT_FRAME_STYLE &
-                          ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX |
-                            wx.MINIMIZE_BOX | wx.CLOSE_BOX))
+        super(BldGrf, self).__init__(None, wx.ID_ANY,
+                                     title='Graph Paper Plotter',
+                                     size=(550, 700),
+                                     style=wx.DEFAULT_FRAME_STYLE &
+                                     ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX |
+                                       wx.MINIMIZE_BOX | wx.CLOSE_BOX))
 
         self.x_mult = ['1']
         self.y_mult = ['1']
