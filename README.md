@@ -7,5 +7,5 @@ and minor line specification for thickness and colors.  And can save the generat
 for future use.
 
 ### LINUX ###
-The file #### Graph.tar.xz #### is intended for Ubuntu and can be expanded into any directory and run by executing the file
+The file Graph.tar.xz is intended for Ubuntu and can be expanded into any directory and run by executing the file
 GraphPaper.py
