@@ -6,6 +6,6 @@ square graph, polar plot, dot plot and an 80 column programing paper for python.
 and minor line specification for thickness and colors.  And can save the generated page as a pdf file
 for future use.
 
-###LINUX###
+### LINUX ###
 The file Graph.tar.xz is intended for Ubuntu and can be expanded into any directory and run by executing the file
 GraphPaper.py
