@@ -27,28 +27,26 @@ class BldGrf(wx.Frame):
         self.x_mult = ['1']
         self.y_mult = ['1']
 
-        PaperSz = ['A6', 'A5', 'A4', 'A3', 'A2', 'A1', 'A0',
+        PaperSz = ['Set Page Size', 'A6', 'A5', 'A4', 'A3', 'A2', 'A1', 'A0',
                    'Letter', 'Legal', '11 x 17']
 
-        self.pgsizes = {'A6': A6, 'A5': A5, 'A4': A4, 'A3': A3, 'A2': A2,
-                        'A1': A1, 'A0': A0, 'Letter': letter, 'Legal': legal,
+        self.pgsizes = {'A6': A6, 'A5': A5, 'A4': A4,
+                        'A3': A3, 'A2': A2, 'A1': A1, 'A0': A0,
+                        'Letter': letter, 'Legal': legal,
                         '11 x 17': elevenSeventeen}
 
-        GraphType = ['Quad', 'Dot', 'Lined Paper', 'Python Coding',
+        GraphType = ['Select Graph Type', 'Quad', 'Dot',
+                     'Lined Paper', 'Python Coding',
                      'Isometric', 'Polar Cordinate',
                      'Log Log', 'Semi Log']
 
-        Colors = ['black', 'dark grey', 'light grey', 'white',
-                  'blue', 'midnight blue', 'light blue',
+        Colors = ['Set Line Color', 'black', 'dark grey', 'light grey',
+                  'white', 'blue', 'midnight blue', 'light blue',
                   'red', 'light red', 'yellow',
                   'dark green', 'green', 'light green']
 
-        Width = ['.1', '.2', '.5', '1', '1.5', '2', '2.5']
-        '''
-        wx.Frame.__init__(self, parent, id, title='Graph Paper Plotter',
-                          size=(550, 700), style=wx.DEFAULT_FRAME_STYLE &
-                          ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX |
-                            wx.MINIMIZE_BOX | wx.CLOSE_BOX))'''
+        Width = ['Set Line Thickness', '.1', '.2', '.5',
+                 '1', '1.5', '2', '2.5']
 
         font1 = wx.Font(12, wx.DEFAULT, wx.NORMAL, wx.FONTWEIGHT_BOLD)
 
@@ -77,11 +75,11 @@ class BldGrf(wx.Frame):
         self.GrphTyp = wx.ComboBox(self, id=1, pos=(10, 10), size=(160, -1),
                                    choices=GraphType, style=wx.CB_READONLY)
         self.GrphTyp.Bind(wx.EVT_COMBOBOX, self.OnCmb)
-        self.GrphTyp.SetHint('Graph Type')
+        self.GrphTyp.SetSelection(0)
 
         self.PgSize = wx.ComboBox(self, id=1, pos=(10, 10), size=(150, -1),
                                   choices=PaperSz, style=wx.CB_READONLY)
-        self.PgSize.SetHint('Paper Size')
+        self.PgSize.SetSelection(0)
 
         self.cmbsizer1.Add(note1, 0, wx.RIGHT | wx.TOP, border=8)
         self.cmbsizer1.Add(self.GrphTyp, 0, wx.ALIGN_LEFT, 5)
@@ -188,11 +186,11 @@ class BldGrf(wx.Frame):
 
         self.MajColor = wx.ComboBox(self, id=1, pos=(10, 10), size=(150, -1),
                                     choices=Colors, style=wx.CB_READONLY)
-        self.MajColor.SetHint('Color')
+        self.MajColor.SetSelection(0)
 
         self.MinColor = wx.ComboBox(self, id=1, pos=(10, 10), size=(150, -1),
                                     choices=Colors, style=wx.CB_READONLY)
-        self.MinColor.SetHint('Color')
+        self.MinColor.SetSelection(0)
 
         self.cmbsizer2.Add((15, 10))
         self.cmbsizer2.Add(self.note5, 0, wx.RIGHT | wx.TOP, border=8)
@@ -207,11 +205,11 @@ class BldGrf(wx.Frame):
 
         self.MajWt = wx.ComboBox(self, id=1, pos=(10, 10), size=(150, -1),
                                  choices=Width, style=wx.CB_READONLY)
-        self.MajWt.SetHint('weight')
+        self.MajWt.SetSelection(0)
 
         self.MinWt = wx.ComboBox(self, id=1, pos=(10, 10), size=(150, -1),
                                  choices=Width, style=wx.CB_READONLY)
-        self.MinWt.SetHint('weight')
+        self.MinWt.SetSelection(0)
 
         self.cmbsizer3.Add(self.note6, 0, wx.ALIGN_CENTER)
         self.cmbsizer3.Add((10, 10))
@@ -328,20 +326,25 @@ class BldGrf(wx.Frame):
 
     def SaveFile(self, evt):
         # get a pdf file name
-        filename = self.PDF_File()
+        filename, parms = self.PDF_File()
         # proced to the page building
         if self.GrphTyp.GetValue() in ('Quad', 'Python Coding', 'Dot'):
-            self.GrdCanvas(filename)
+            self.GrdCanvas(filename, parms)
         elif self.GrphTyp.GetValue() in ('Log Log', 'Semi Log'):
-            self.LogCanvas(filename)
+            self.LogCanvas(filename, parms)
         elif self.GrphTyp.GetValue() == 'Isometric':
-            self.IsoCanvas(filename)
+            self.IsoCanvas(filename, parms)
         elif self.GrphTyp.GetValue() == 'Polar Cordinate':
-            self.PolarCanvas(filename)
+            self.PolarCanvas(filename, parms)
         elif self.GrphTyp.GetValue() == 'Lined Paper':
-            self.LinesCanvas(filename)
+            self.LinesCanvas(filename, parms)
 
     def PDF_File(self):
+        # validate that all the data is present before procedding
+        parms = self.ValData()
+        if parms is False:
+            return
+
         saveDialog = wx.FileDialog(self, message='Save Report as PDF.',
                                    wildcard='PDF (*.pdf)|*.pdf',
                                    style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT)
@@ -355,16 +358,11 @@ class BldGrf(wx.Frame):
 
         saveDialog.Destroy()
 
-        return filename
+        return filename, parms
 
-    def GrdCanvas(self, filename):
+    def GrdCanvas(self, filename, parms):
         self.filename = filename    # no need to assign a file extention
         self.footer = "Copyright © 2020 KPH Projects"
-
-        # validate that all the data is present before procedding
-        parms = self.ValData()
-        if parms is False:
-            return
 
         c = canvas.Canvas(filename, parms[1])
 
@@ -434,16 +432,11 @@ class BldGrf(wx.Frame):
 
         return lst
 
-    def LogCanvas(self, filename):
+    def LogCanvas(self, filename, parms):
         self.filename = filename    # no need to assign a file extention
         self.footer = "Copyright © 2020 KPH Projects"
 
         ylist = []
-
-        # validate that all the data is present before procedding
-        parms = self.ValData()
-        if parms is False:
-            return
 
         c = canvas.Canvas(filename, parms[1])
 
@@ -579,11 +572,7 @@ class BldGrf(wx.Frame):
 
         return lst_min, lst_max
 
-    def IsoCanvas(self, filename):
-
-        parms = self.ValData()
-        if parms is False:
-            return
+    def IsoCanvas(self, filename, parms):
 
         c = canvas.Canvas(filename, parms[1])
         width, height = parms[1]
@@ -702,14 +691,9 @@ class BldGrf(wx.Frame):
 
         return lst
 
-    def PolarCanvas(self, filename):
+    def PolarCanvas(self, filename, parms):
         self.filename = filename    # no need to assign a file extention
         self.footer = "Copyright © 2020 KPH Projects"
-
-        # validate that all the data is present before procedding
-        parms = self.ValData()
-        if parms is False:
-            return
 
         c = canvas.Canvas(filename, parms[1])
 
@@ -791,14 +775,9 @@ class BldGrf(wx.Frame):
         c.showPage()
         c.save()
 
-    def LinesCanvas(self, filename):
+    def LinesCanvas(self, filename, parms):
         self.filename = filename    # no need to assign a file extention
         self.footer = "Copyright © 2020 KPH Projects"
-
-        # validate that all the data is present before procedding
-        parms = self.ValData()
-        if parms is False:
-            return
 
         c = canvas.Canvas(filename, parms[1])
 
@@ -817,21 +796,27 @@ class BldGrf(wx.Frame):
 
         n = 1
         for i in arange(mrg1y * units + 20, fy, steps):
-            c.setStrokeColor(parms[8])
-            c.setLineWidth(parms[9])
+
             y = i
             if n % 2 == 0:
-                c.setDash(1, 2)
+                if parms[7]:
+                    c.setStrokeColor(parms[5])
+                    c.setLineWidth(parms[6])
+                    c.setDash(1, 2)
             else:
+                c.setStrokeColor(parms[8])
+                c.setLineWidth(parms[9])
                 c.setDash(1, 0)
             c.line(x1, y, x2, y)
             n += 1
 
+        # draw a border around page margines
         c.setDash(1, 0)
         c.setStrokeColor(black)
         c.setLineWidth(1)
         c.rect(mrg1x * units, mrg1y * units, fx, fy)
 
+        # set the configuration for the left margine line
         if parms[15] != 0:
             y1 = mrg1y * units
             y2 = mrg1y * units + fy
@@ -853,14 +838,14 @@ class BldGrf(wx.Frame):
                  'dark grey': darkgrey, 'light grey': lightgrey,
                  'white': white}
 
-        if self.GrphTyp.GetValue() == '':
+        if self.GrphTyp.GetValue() == 'Select Graph Type':
             wx.MessageBox('Please select graph type.', 'Missing Data',
                           wx.OK | wx.ICON_INFORMATION)
             return False
         else:
             self.graphtyp = self.GrphTyp.GetValue()
 
-        if self.PgSize.GetValue() == '':
+        if self.PgSize.GetValue() == 'Set Page Size':
             wx.MessageBox('Please select page size.', 'Missing Data',
                           wx.OK | wx.ICON_INFORMATION)
             return False
@@ -916,7 +901,8 @@ class BldGrf(wx.Frame):
             self.ygap = eval(self.y_axis.GetValue())
 
         # set properties for minor lines
-        if self.MinColor.GetValue() == '' or self.MinWt.GetValue() == '':
+        if self.MinColor.GetValue() == 'Set Line Color' or \
+           self.MinWt.GetValue() == 'Set Line Thickness':
             wx.MessageBox('Information is needed for the minor grid lines.',
                           'Missing Data',
                           wx.OK | wx.ICON_INFORMATION)
@@ -928,7 +914,8 @@ class BldGrf(wx.Frame):
         # set properties for major lines and confirm major lines
         self.majorLine = self.chkmjr.GetValue()
         if self.majorLine is True:
-            if self.MajColor.GetValue() == '' or self.MajWt.GetValue() == '':
+            if self.MajColor.GetValue() == 'Set Line Color' or \
+               self.MajWt.GetValue() == 'Set Line Thickness':
 
                 return False
             else:
@@ -936,7 +923,8 @@ class BldGrf(wx.Frame):
                 self.lineWidthMajor = eval(self.MajWt.GetValue())
 
         else:
-            if self.MajColor.GetValue() == '' or self.MajWt.GetValue() == '':
+            if self.MajColor.GetValue() == 'Set Line Color' or \
+               self.MajWt.GetValue() == 'Set Line Thickness':
                 self.colorMajor = black
                 self.lineWidthMajor = 1
             else:
@@ -987,7 +975,7 @@ class BldGrf(wx.Frame):
         self.note4.SetLabel('MINOR LINES')
 
         if obj.GetValue() == 'Python Coding':
-            self.PgSize.ChangeValue('Legal')
+            self.PgSize.SetSelection(9)
             self.lefttxt.ChangeValue('20')
             self.righttxt.ChangeValue('6')
             self.toptxt.ChangeValue('5')
@@ -999,10 +987,10 @@ class BldGrf(wx.Frame):
             self.y_axis.ChangeValue('6')
             self.x_interval.ChangeValue('4')
             self.y_interval.ChangeValue('8')
-            self.MajColor.ChangeValue('dark grey')
-            self.MajWt.ChangeValue('1.5')
-            self.MinColor.ChangeValue('light red')
-            self.MinWt.ChangeValue('.5')
+            self.MajColor.SetSelection(2)
+            self.MajWt.SetSelection(5)
+            self.MinColor.SetSelection(9)
+            self.MinWt.SetSelection(3)
         elif obj.GetValue() == 'Dot':
             self.note4.SetLabel('DOTS')
             self.note6.SetLabel('Dot Size')
@@ -1091,8 +1079,8 @@ class BldGrf(wx.Frame):
                             (self.unitsbox.GetSelection()) + ')')
         self.note3.SetLabel('MAJOR LINES')
         self.note4.SetLabel('MINOR LINES')
-        self.GrphTyp.ChangeValue('')
-        self.PgSize.ChangeValue('')
+        self.GrphTyp.SetSelection(0)
+        self.PgSize.SetSelection(0)
         self.lefttxt.ChangeValue('')
         self.righttxt.ChangeValue('')
         self.toptxt.ChangeValue('')
@@ -1104,10 +1092,10 @@ class BldGrf(wx.Frame):
         self.y_axis.ChangeValue('')
         self.x_interval.ChangeValue('')
         self.y_interval.ChangeValue('')
-        self.MajColor.ChangeValue('')
-        self.MajWt.ChangeValue('')
-        self.MinColor.ChangeValue('')
-        self.MinWt.ChangeValue('')
+        self.MajColor.SetSelection(0)
+        self.MajWt.SetSelection(0)
+        self.MinColor.SetSelection(0)
+        self.MinWt.SetSelection(0)
 
 
 class PDFFrm(wx.Frame):
