@@ -8,4 +8,8 @@ for future use.
 
 ### LINUX ###
 The file Graph.tar.xz is intended for Ubuntu and can be expanded into any directory and run by executing the file
-GraphPaper.py
+GraphPaper.py located in the main GraphPaper directory.
+
+### WINDOWS ###
+The file GraphPaper.zip is intended for the Windows systems.  Unzip the file to any location on the C:drive 
+and run the GraphPaper file located in the main GraphPaper directory.
