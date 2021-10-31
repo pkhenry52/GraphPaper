@@ -7,9 +7,11 @@ and minor line specification for thickness and colors.  And can save the generat
 for future use.
 
 ### LINUX ###
-The file Graph.tar.xz is intended for Ubuntu and can be expanded into any directory and run by executing the file
-GraphPaper.py located in the main GraphPaper directory.
+The file Graph.tar.xz is intended for Linux systems and has been tested under Ubuntu 18 to 20.
+Expanded the .tar file into any directory and run by executing the file GraphPaper.py located 
+in the main GraphPaper directory.
 
 ### WINDOWS ###
-The file GraphPaper.zip is intended for the Windows systems.  Unzip the file to any location on the C:drive 
-and run the GraphPaper file located in the main GraphPaper directory.
+The file GraphPaper.zip is intended for the Windows users and has been tested on Windows 10, but 
+should work on any 64 bit Windows system.  Unzip the file to any location on the C: drive 
+and run the GraphPaper.exe file located in the main GraphPaper directory.
